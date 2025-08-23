@@ -1,0 +1,25 @@
+Metadata-Version: 2.4
+Name: secure-chat
+Version: 0.1.0
+Summary: Privacy-Preserving Secure Chat (Phase 0 - AES-GCM, framing, CLI)
+Author: Kolachalama Sri Charan
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: cryptography>=42.0.0
+Requires-Dist: typer>=0.12.3
+Requires-Dist: rich>=13.7.0
+Requires-Dist: pydantic>=2.7.0
+
+# Secure Chat (Phase 0)
+
+- AES-GCM (AEAD)
+- Per-message random 12-byte nonce
+- Length-prefixed frames
+- Typer CLI
+
+## Usage
+
+```bash
+pip install -e .
+secure-chat server --port 65432
+secure-chat client --host 127.0.0.1 --port 65432
