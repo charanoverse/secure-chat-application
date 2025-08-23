@@ -1,0 +1,5 @@
+Always activate your venv before running both server & client
+.venv\Scripts\activate
+
+server: secure-chat server --port 65432 --peer-id server1 --priv server_priv.pem
+client: secure-chat client --host 127.0.0.1 --port 65432 --peer-id client1 --server-peer-id server1 --server-pub server_pub.pem

@@ -1,0 +1,1 @@
+chat history is optional and deferred to future enhancements
