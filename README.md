@@ -1,13 +1,49 @@
-# Secure Chat (Phase 0)
+# Secure Chat App — Phase 1 (Terminal Version)
 
-- AES-GCM (AEAD)
-- Per-message random 12-byte nonce
-- Length-prefixed frames
-- Typer CLI
+**Status:** ✅ Working (Phase 1: Signal-like secure chat)  
+**Mode:** Terminal / CLI demo  
 
-## Usage
+---
+
+## Features Implemented (Phase 1)
+
+1. **End-to-End Encryption (E2EE)**
+   - Uses **ephemeral X25519 keys** for Diffie-Hellman key exchange.
+   - Session keys derived via **HKDF-SHA256** → `k_enc` (AES-GCM encryption) and `k_auth` (authentication).
+
+2. **Forward Secrecy**
+   - Keys are **rotated every N messages**.
+   - Old keys cannot decrypt future messages.
+
+3. **Replay/Ordering Protection**
+   - Each message includes **sequence number**, **timestamp**, and **peer ID** in AES-GCM AAD.
+
+4. **Identity Pinning**
+   - Server static public key (PEM) pinned locally in client to prevent MITM attacks.
+
+5. **AES-GCM Encryption**
+   - 256-bit keys, 12-byte nonce.
+   - Authenticated encryption ensures **confidentiality and integrity**.
+
+6. **Terminal-Based CLI**
+   - Run server & client entirely in terminal.
+   - Secure, lightweight, easy for local LAN demos.
+
+---
+
+## Getting Started
+
+### Requirements
+
+- Python 3.10+
+- `cryptography` library
+- `typer` library
+
+Usage:
 
 ```bash
-pip install -e .
-secure-chat server --port 65432
-secure-chat client --host 127.0.0.1 --port 65432
+Running the Server:
+python -m secure_chat.cli server --port 65432 --peer-id server1 --priv server_priv.pem
+
+Running the Client:
+python -m secure_chat.cli client --host 127.0.0.1 --port 65432 --peer-id client1 --server-peer-id server1 --server-pub server_pub.pem
