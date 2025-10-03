@@ -2,8 +2,11 @@
 import typer
 from rich import print
 from pathlib import Path
-
+from .storage.history import init_db, search_messages
 from .services.chat_service import run_server, run_client
+
+# Initialize the encrypted history database on first run
+init_db()
 
 app = typer.Typer(help="Secure Chat - Phase 1 (X25519 handshake, AEAD, replay protection, rekey)")
 
@@ -38,6 +41,19 @@ def client(
         server_peer_id=server_peer_id,
         pinned_server_pubkey_pem=server_pub,
     )
+
+@app.command()
+def search(term: str):
+    """
+    Search encrypted chat history for a term.
+    """
+    results = search_messages(term)
+    if not results:
+        typer.echo("No messages found.")
+    else:
+        typer.echo(f"Found {len(results)} messages:")
+        for msg in results:
+            typer.echo(f"- {msg}")
 
 if __name__ == "__main__":
     app()

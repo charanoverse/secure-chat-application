@@ -9,8 +9,8 @@ import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Tuple  
-
+from typing import Optional, Tuple
+from secure_chat.storage.history import store_message
 from rich import print
 
 from ..net.framing import send_frame, recv_frame  # raw len-prefixed I/O
@@ -189,10 +189,15 @@ def _send_secure(state: ConnectionState, plaintext: bytes) -> None:
     Encrypt using AES-GCM (Protocol v1) and write frame:
       [seq:8][ts:8][nonce:12][ct_len:4][ct...]
     Note: ts is in seconds (not ms) to match aead.py.
+    Additionally, store the message locally in encrypted searchable history.
     """
+    from secure_chat.storage.history import store_message  # import locally to avoid circular deps
+    import time
+
     s = state.session
     ts_s = int(time.time())
 
+    # 1️⃣ Encrypt using existing AES-GCM logic
     # encrypt_aead_v1(key, plaintext, seq, ts, peer_id)
     blob = encrypt_aead_v1(
         s.k_enc,
@@ -205,6 +210,7 @@ def _send_secure(state: ConnectionState, plaintext: bytes) -> None:
     nonce = blob[:NONCE_SIZE]
     ct = blob[NONCE_SIZE:]
 
+    # 2️⃣ Frame for network
     frame = (
         s.send_seq.to_bytes(8, "big")
         + ts_s.to_bytes(8, "big")
@@ -215,10 +221,19 @@ def _send_secure(state: ConnectionState, plaintext: bytes) -> None:
 
     send_frame(state.sock, frame)
 
-    # bookkeeping: rekey decision uses the nonce just used
+    # 3️⃣ Bookkeeping for rekey
     s.msgs_since_rekey += 1
     s.maybe_rekey(nonce)
     s.send_seq += 1
+
+    # 4️⃣ Store locally for searchable encrypted history
+    try:
+        # plaintext here is bytes; decode to string for indexing
+        store_message(state.local_peer_id, plaintext.decode("utf-8"))
+    except Exception as e:
+        # avoid breaking sending if DB fails
+        print(f"[Warning] Failed to store message in history: {e}")
+
 
 
 def _recv_secure(state: ConnectionState) -> Optional[bytes]:
