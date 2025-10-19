@@ -1,0 +1,29 @@
+SECURE-CHAT-APP/
+├── .venv/
+├── dist/
+├── secure_chat/
+│   ├── crypto/
+│   │   ├── aead.py
+│   │   ├── handshake_rsa.py
+│   │   └── handshake_x25519.py
+│   ├── net/
+│   │   └── framing.py
+│   ├── services/
+│   │   ├── chat_service.py
+│   │   └── ephemeral_privacy.py
+│   ├── storage/
+│   │   ├── history.py
+│   │   ├── logs.py
+│   │   └── __init__.py
+│   ├── app_config.py
+│   ├── cli.py
+│   └── generate_keys.py
+├── secure_chat.egg-info/
+├── chat_history.enc
+├── pyproject.toml
+├── README.md
+├── secure_chat_history.db
+├── server_priv.pem
+├── server_pub.pem
+├── structure.txt
+└── usage.txt
