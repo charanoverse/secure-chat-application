@@ -1,6 +1,7 @@
 Always activate your venv before running both server & client
 .venv\Scripts\activate
 
+old(basic- till phase 2):
 server: secure-chat server --port 65432 --peer-id server1 --priv server_priv.pem
 client: secure-chat client --host 127.0.0.1 --port 65432 --peer-id client1 --server-peer-id server1 --server-pub server_pub.pem
 
@@ -10,13 +11,25 @@ Get-ChildItem -Path . -Include "__pycache__" -Recurse | Remove-Item -Recurse -Fo
 Get-ChildItem -Path . -Include "*.pyc" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
 
 
-new:
+new(works till phase 4):
 server: python -m secure_chat.cli server --peer-id SERVER --priv server_priv.pem --bind 0.0.0.0 --port 65432 --history secure_chat_history.db
 client: python -m secure_chat.cli client --host 127.0.0.1 --port 65432 --peer-id ALICE --server-peer-id SERVER --server-pub server_pub.pem --history secure_chat_history.db
 
 
 search message:
-python -m secure_chat.cli search bob
+python -m secure_chat.cli search "message"
 
 ttl message:
 /ttl 3 write a message
+
+
+Relay Mode:
+server:
+python -m secure_chat.relay.relay_server
+client:
+python -m secure_chat.cli client --host 127.0.0.1 --port 65432 --peer-id ALICE --server-peer-id SERVER --server-pub server_pub.pem --history secure_chat_history.db --relay ws://localhost:8000/ws/room1
+
+
+pakaging:
+pip install build
+python -m build

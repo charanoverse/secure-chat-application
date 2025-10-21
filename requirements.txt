@@ -1,0 +1,9 @@
+cryptography>=40.0.0
+fastapi>=0.95.2
+uvicorn[standard]>=0.22.0
+websockets>=11.0.3
+rich>=13.4.0
+typer[all]>=0.7.0
+qrcode[pil]>=7.4
+Pillow>=10.0.0
+typing-extensions>=4.5.0

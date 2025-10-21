@@ -7,6 +7,8 @@ import sys
 import base64
 import threading
 import time
+import asyncio
+import websockets
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Tuple
@@ -376,10 +378,23 @@ def run_client(
     client_peer_id: str,
     server_peer_id: str,
     pinned_server_pubkey_pem: str | Path,
+    relay_url: str | None = None,   # 🆕 added
 ) -> None:
     print(f"[bold blue]Client[/bold blue] connecting to {host}:{port}...")
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((host, port))
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((host, port))
+        using_relay = False
+    except Exception as e:
+        print(f"[red]Direct TCP connection failed: {e}[/red]")
+        if relay_url:
+            using_relay = True
+        else:
+            print("[red]No relay URL provided. Exiting.[/red]")
+            return
+    if using_relay:
+        asyncio.run(_relay_client_loop(relay_url, client_peer_id))
+        return
 
     # --- Phase 1 handshake ---
     state = _client_handshake(sock, client_peer_id, server_peer_id, Path(pinned_server_pubkey_pem))
@@ -517,3 +532,39 @@ def _send_loop(state: ConnectionState, label: str) -> None:
         except Exception:
             pass
         print("\n[yellow][You exited via Ctrl+C][/yellow]")
+
+
+# ---------------- Relay WebSocket mode (Phase 4) ----------------
+
+async def _relay_client_loop(relay_url: str, peer_id: str) -> None:
+    """
+    Connects to a relay server via WebSocket and relays encrypted frames.
+    The relay only forwards encrypted messages.
+    """
+    print(f"[blue]Connecting to relay: {relay_url}[/blue]")
+    async with websockets.connect(relay_url) as ws:
+        print("[green]Connected to relay. Type messages to send.[/green]")
+        # Reader task
+        async def recv_task():
+            async for raw in ws:
+                try:
+                    data = json.loads(raw)
+                    frame_b64 = data.get("frame_bytes")
+                    if frame_b64:
+                        print(f"\nPeer (relay): {frame_b64[:40]}...")  # ciphertext preview
+                except Exception:
+                    pass
+
+        # Writer task
+        async def send_task():
+            while True:
+                msg = input("You (relay): ")
+                if msg.lower() == "exit":
+                    break
+                payload = {
+                    "from_id": peer_id,
+                    "frame_bytes": base64.b64encode(msg.encode()).decode()
+                }
+                await ws.send(json.dumps(payload))
+
+        await asyncio.gather(recv_task(), send_task())
