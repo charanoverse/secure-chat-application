@@ -1,29 +1,34 @@
 SECURE-CHAT-APP/
-├── .venv/
-├── dist/
-├── secure_chat/
-│   ├── crypto/
-│   │   ├── aead.py
-│   │   ├── handshake_rsa.py
-│   │   └── handshake_x25519.py
-│   ├── net/
-│   │   └── framing.py
-│   ├── services/
-│   │   ├── chat_service.py
-│   │   └── ephemeral_privacy.py
-│   ├── storage/
-│   │   ├── history.py
-│   │   ├── logs.py
-│   │   └── __init__.py
-│   ├── app_config.py
-│   ├── cli.py
-│   └── generate_keys.py
-├── secure_chat.egg-info/
-├── chat_history.enc
-├── pyproject.toml
-├── README.md
-├── secure_chat_history.db
-├── server_priv.pem
-├── server_pub.pem
-├── structure.txt
-└── usage.txt
+├── .venv/                                 # Virtual environment
+├── dist/                                  # Distribution files
+│   ├── secure_chat-0.1.0-py3-none-any.whl  # Wheel file for installation
+│   └── secure_chat-0.1.0.tar.gz            # Tarball file for installation
+├── secure_chat/                           # Main application code
+│   ├── crypto/                            # Cryptographic operations
+│   │   ├── aead.py                        # AEAD encryption
+│   │   ├── handshake_rsa.py               # RSA handshake
+│   │   └── handshake_x25519.py            # X25519 handshake
+│   ├── net/                               # Networking related files
+│   │   └── framing.py                     # Frame handling
+│   ├── relay/                             # Relay server
+│   │   └── relay_server.py                # Relay server implementation
+│   ├── services/                          # Services layer
+│   │   ├── chat_service.py                # Chat service
+│   │   └── ephemeral_privacy.py           # Ephemeral privacy service
+│   ├── storage/                           # Storage handling
+│   │   ├── history.py                     # Chat history
+│   │   ├── logs.py                        # Log file management
+│   │   ├── __init__.py                    # Initialization module
+│   │   ├── app_config.py                  # App configuration
+│   │   └── generate_keys.py               # Key generation
+│   ├── cli.py                             # Command line interface
+├── secure_chat.egg-info/                  # Egg info for packaging
+├── chat_history.enc                       # Encrypted chat history
+├── pyproject.toml                         # Project metadata
+├── README.md                              # Project documentation
+├── requirements.txt                       # Dependencies list
+├── secure_chat_history.db                 # Database for chat history
+├── server_priv.pem                        # Server private key
+├── server_pub.pem                         # Server public key
+├── structure.txt                          # Project structure documentation
+└── usage.txt                              # Usage instructions
