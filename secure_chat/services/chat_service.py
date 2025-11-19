@@ -26,7 +26,7 @@ from ..crypto.handshake_x25519 import (
     HandshakeResult,
 )
 from ..storage.logs import append_encrypted_line, read_last_n_decrypted
-from ..app_config import (
+from ..storage.app_config import (
     PROTOCOL_VERSION,
     REKEY_EVERY_N_MESSAGES,
     REKEY_EVERY_T_SECONDS,

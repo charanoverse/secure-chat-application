@@ -14,6 +14,7 @@ dependencies = [
 
 [project.scripts]
 secure-chat = "secure_chat.cli:app"
+secure-chat-gui = "secure_chat.gui:main"
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]

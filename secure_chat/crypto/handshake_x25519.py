@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.exceptions import InvalidSignature
 
-from ..app_config import (
+from ..storage.app_config import (
     HKDF_TOTAL_BYTES, AES_KEY_BYTES,
     HKDF_INFO_HANDSHAKE, PROTOCOL_VERSION,
 )
