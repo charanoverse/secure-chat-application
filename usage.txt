@@ -22,7 +22,6 @@ python -m secure_chat.cli search "message"
 ttl message:
 /ttl 3 write a message
 
-
 Relay Mode:
 server:
 python -m secure_chat.relay.relay_server
@@ -33,3 +32,6 @@ python -m secure_chat.cli client --host 127.0.0.1 --port 65432 --peer-id ALICE -
 pakaging:
 pip install build
 python -m build
+
+GUI working:
+python -m secure_chat.gui
